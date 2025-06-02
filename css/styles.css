@@ -120,13 +120,955 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Footer */
-footer {
+/* Map Section */
+.map-section {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    min-height: 600px;
+}
+
+.map-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 2;
+    height: auto;
+    min-height: 400px;
+}
+
+.map-sidebar {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.map-sidebar h2 {
+    color: var(--deep-ocean);
+    margin-bottom: 1rem;
+}
+
+#location-list {
+    overflow-y: auto;
+    max-height: 500px;
+}
+
+#cleanup-map {
+    height: 400px;
+    border-radius: 8px;
+}
+
+/* Search Box */
+.search-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 0.5rem;
+    border: 2px solid var(--ocean-blue);
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--eco-green);
+}
+
+.search-button {
+    background: var(--ocean-blue);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.search-button:hover {
+    background: var(--deep-ocean);
+}
+
+/* Map Markers and Popups */
+.marker {
+    width: 25px;
+    height: 25px;
+    background-color: var(--eco-green);
+    border: 2px solid white;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.marker:hover {
+    transform: scale(1.2);
+}
+
+.mapboxgl-popup {
+    max-width: 300px;
+}
+
+.mapboxgl-popup-content {
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.mapboxgl-popup-content h3 {
+    color: var(--deep-ocean);
+    margin-bottom: 8px;
+}
+
+.popup-button, .list-button {
+    background-color: var(--ocean-blue);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.popup-button:hover, .list-button:hover {
     background-color: var(--deep-ocean);
+}
+
+.location-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.location-item:last-child {
+    border-bottom: none;
+}
+
+.location-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.location-item p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+/* Search Results Highlight */
+.location-item.search-match {
+    border-left: 4px solid var(--sandy-yellow);
+    background-color: rgba(247, 179, 43, 0.1);
+}
+
+/* Location Item Enhancements */
+.location-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.share-button {
+    background: var(--sandy-yellow);
+    color: var(--deep-ocean);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+.share-button:hover {
+    background: #e5a012;
+    transform: translateY(-1px);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Weather Information Section */
+.weather-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 8px 0;
+    padding: 8px;
+    background: var(--sea-foam);
+    border-radius: 6px;
+}
+
+.weather-info img {
+    width: 35px;
+    height: 35px;
+}
+
+.weather-info span {
+    font-size: 0.9rem;
+    color: var(--deep-ocean);
+}
+
+/* Enhanced Weather Display */
+.current-weather {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.weather-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.weather-details .temp {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--deep-ocean);
+}
+
+.weather-details .condition {
+    color: var(--ocean-blue);
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.forecast-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.forecast-day .date {
+    font-size: 0.8rem;
+    color: var(--deep-ocean);
+}
+
+.forecast-day img {
+    width: 40px;
+    height: 40px;
+}
+
+.forecast-day .temp {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Tide Information */
+.tide-info {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.tide-header {
+    color: var(--ocean-blue);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.tide-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    font-size: 0.9rem;
+}
+
+/* Filter Controls */
+.filter-controls {
+    margin-bottom: 1rem;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 2px solid var(--ocean-blue);
+    border-radius: 6px;
+    background-color: white;
+    color: var(--deep-ocean);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--eco-green);
+}
+
+/* Loading States */
+.weather-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 8px 0;
+    padding: 8px;
+    background: var(--sea-foam);
+    border-radius: 6px;
+    color: var(--deep-ocean);
+    font-size: 0.9rem;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--ocean-blue);
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Notification System */
+.notification-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.notification {
+    background: white;
+    padding: 12px 24px;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: slideIn 0.3s ease-out;
+    max-width: 300px;
+}
+
+.notification.success {
+    border-left: 4px solid var(--eco-green);
+}
+
+.notification.error {
+    border-left: 4px solid #ff4444;
+}
+
+.notification.info {
+    border-left: 4px solid var(--ocean-blue);
+}
+
+.notification.achievement {
+    background: linear-gradient(135deg, var(--deep-ocean), var(--ocean-blue));
+    color: white;
+    border: none;
+    padding: 1rem;
+}
+
+.notification.achievement .achievement-icon {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Settings Panel */
+.settings-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.settings-button:hover {
+    transform: rotate(45deg);
+}
+
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+}
+
+.settings-panel.active {
+    right: 0;
+}
+
+.settings-content {
+    padding: 2rem;
+    position: relative;
+}
+
+.settings-content h2 {
+    color: var(--deep-ocean);
+    margin-bottom: 1.5rem;
+}
+
+.settings-group {
+    margin-bottom: 2rem;
+}
+
+.settings-group h3 {
+    color: var(--ocean-blue);
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.setting-item {
+    margin-bottom: 1rem;
+}
+
+.setting-item label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--deep-ocean);
+}
+
+.setting-item select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid var(--ocean-blue);
+    border-radius: 6px;
+    background: white;
+    color: var(--deep-ocean);
+}
+
+.setting-item input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.close-button {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--deep-ocean);
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.close-button:hover {
+    transform: rotate(90deg);
+}
+
+/* Achievements Dashboard */
+.achievements-dashboard {
+    background: var(--sea-foam);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.achievement-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    transition: transform 0.2s ease;
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(1);
+}
+
+.achievement-card:hover {
+    transform: translateY(-2px);
+}
+
+.achievement-icon {
+    font-size: 2rem;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-info h4 {
+    color: var(--deep-ocean);
+    margin-bottom: 0.2rem;
+    font-size: 0.9rem;
+}
+
+.achievement-info p {
+    color: #666;
+    font-size: 0.8rem;
+    margin: 0;
+}
+
+.impact-stats {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.impact-stats h4 {
+    color: var(--ocean-blue);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--deep-ocean);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Event Chat */
+.event-chat {
+    position: fixed;
+    bottom: 20px;
+    right: -350px;
+    width: 350px;
+    height: 500px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s ease;
+    z-index: 900;
+}
+
+.event-chat.active {
+    right: 20px;
+}
+
+.chat-header {
+    padding: 1rem;
+    background: var(--ocean-blue);
+    color: white;
+    border-radius: 10px 10px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chat-message {
+    padding: 0.8rem;
+    border-radius: 10px;
+    max-width: 80%;
+    word-wrap: break-word;
+}
+
+.chat-message.sent {
+    background: var(--ocean-blue);
+    color: white;
+    align-self: flex-end;
+}
+
+.chat-message.received {
+    background: var(--sea-foam);
+    color: var(--deep-ocean);
+    align-self: flex-start;
+}
+
+.chat-message .user {
+    font-size: 0.8rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.chat-message .timestamp {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-top: 0.3rem;
+}
+
+.chat-input {
+    padding: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    border-top: 1px solid #eee;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 0.8rem;
+    border: 2px solid var(--ocean-blue);
+    border-radius: 20px;
+    outline: none;
+}
+
+.chat-input button {
+    background: var(--ocean-blue);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.chat-input button:hover {
+    transform: scale(1.1);
+}
+
+/* Impact Section */
+.impact-section {
+    padding: 4rem 2rem;
+    background: linear-gradient(rgba(27, 73, 101, 0.9), rgba(27, 73, 101, 0.9)),
+                url('https://source.unsplash.com/1600x900/?ocean') center/cover;
     color: white;
     text-align: center;
+}
+
+.impact-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 3rem;
+}
+
+.impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.impact-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    transition: transform 0.3s ease;
+}
+
+.impact-card:hover {
+    transform: translateY(-5px);
+}
+
+.impact-card i {
+    font-size: 2.5rem;
+    color: var(--sandy-yellow);
+}
+
+.impact-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, var(--sandy-yellow), var(--eco-green));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.impact-label {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Profile Panel */
+.profile-button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    transition: transform 0.2s ease;
+}
+
+.profile-button:hover {
+    transform: scale(1.1);
+}
+
+.profile-panel {
+    position: fixed;
+    top: 0;
+    right: -400px;
+    width: 400px;
+    height: 100vh;
+    background: white;
+    box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+    transition: right 0.3s ease;
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.profile-panel.active {
+    right: 0;
+}
+
+.profile-content {
+    padding: 2rem;
+    position: relative;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--ocean-blue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profile-avatar i {
+    font-size: 3rem;
+    color: white;
+}
+
+.profile-info h3 {
+    color: var(--deep-ocean);
+    margin-bottom: 0.5rem;
+}
+
+.profile-level {
+    color: var(--ocean-blue);
+    font-weight: 500;
+}
+
+/* Progress Bar */
+.progress-section {
+    background: var(--sea-foam);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+}
+
+.progress-section h3 {
+    color: var(--deep-ocean);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.progress-bar {
+    height: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sandy-yellow), var(--eco-green));
+    transition: width 0.3s ease;
+}
+
+/* Badges Section */
+.badges-section {
+    margin-bottom: 2rem;
+}
+
+.badges-section h3 {
+    color: var(--deep-ocean);
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.badges-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.badge-item {
+    aspect-ratio: 1;
+    background: var(--sea-foam);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
     padding: 1rem;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.badge-item:hover {
+    transform: translateY(-2px);
+}
+
+.badge-item.locked {
+    opacity: 0.5;
+    filter: grayscale(1);
+}
+
+.badge-icon {
+    font-size: 2rem;
+}
+
+.badge-name {
+    font-size: 0.8rem;
+    text-align: center;
+    color: var(--deep-ocean);
+}
+
+/* Level Up Animation */
+@keyframes levelUp {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.5);
+        opacity: 0.8;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.level-up {
+    animation: levelUp 0.5s ease;
+}
+
+/* Badge Unlock Animation */
+@keyframes unlockBadge {
+    0% {
+        transform: rotateY(0deg);
+    }
+    100% {
+        transform: rotateY(360deg);
+    }
+}
+
+.badge-unlock {
+    animation: unlockBadge 1s ease;
+}
+
+/* Next Cleanup Map Section */
+#next-cleanup-map {
     margin-top: 2rem;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#next-cleanup-map h3 {
+    color: var(--deep-ocean);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#next-cleanup-map iframe {
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Update map container for dual maps */
+.map-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    flex: 2;
+    height: auto;
+    min-height: 400px;
+}
+
+#cleanup-map {
+    height: 400px;
+    border-radius: 8px;
+}
+
+@media (max-width: 768px) {
+    #next-cleanup-map iframe {
+        height: 300px;
+    }
 }
 
 /* Responsive Design */
@@ -144,6 +1086,73 @@ footer {
 
     .hero-section h1 {
         font-size: 2.5rem;
+    }
+
+    .map-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .map-container {
+        height: 400px;
+    }
+
+    .settings-panel {
+        width: 100%;
+        right: -100%;
+    }
+
+    .achievements-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .forecast {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.3rem;
+    }
+
+    .current-weather {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .event-chat {
+        width: 100%;
+        height: 100%;
+        bottom: -100%;
+        right: 0;
+        transition: bottom 0.3s ease;
+    }
+
+    .event-chat.active {
+        bottom: 0;
+        right: 0;
+    }
+
+    .impact-section h2 {
+        font-size: 2rem;
+    }
+
+    .impact-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .profile-panel {
+        width: 100%;
+        right: -100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .forecast {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .impact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .impact-number {
+        font-size: 2rem;
     }
 }
 

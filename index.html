@@ -6,7 +6,9 @@
     <meta name="description" content="ShoreSquad - Join beach cleanup events and track weather conditions">
     <title>ShoreSquad - Rally Your Crew for Beach Cleanup</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
 </head>
 <body>
     <header class="main-header">
@@ -17,9 +19,142 @@
                 <li><a href="#events">Events</a></li>
                 <li><a href="#weather">Weather</a></li>
                 <li><a href="#map">Map</a></li>
+                <li><button id="profileButton" class="profile-button">
+                    <i class="fas fa-user"></i>
+                </button></li>
+                <li><button id="settingsButton" class="settings-button">
+                    <i class="fas fa-cog"></i>
+                </button></li>
             </ul>
         </nav>
     </header>
+
+    <div id="profilePanel" class="profile-panel">
+        <div class="profile-content">
+            <h2>Volunteer Profile</h2>
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h3 id="profileName">Beach Guardian</h3>
+                    <div class="profile-level">
+                        <span>Level </span>
+                        <span id="userLevel">1</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <h3>Progress to Next Level</h3>
+                <div class="progress-bar">
+                    <div id="levelProgress" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <p><span id="currentXP">0</span> / <span id="nextLevelXP">100</span> XP</p>
+            </div>
+
+            <div class="badges-section">
+                <h3>Badges</h3>
+                <div id="badgesGrid" class="badges-grid">
+                    <!-- Badges will be populated dynamically -->
+                </div>
+            </div>
+
+            <div class="cleanup-stats">
+                <h3>Your Impact</h3>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <i class="fas fa-trash-alt"></i>
+                        <span id="userTrashCollected">0</span>
+                        <span class="stat-label">kg collected</span>
+                    </div>
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-check"></i>
+                        <span id="userEventsCompleted">0</span>
+                        <span class="stat-label">events completed</span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="closeProfile" class="close-button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="settingsPanel" class="settings-panel">
+        <div class="settings-content">
+            <h2>Settings</h2>
+            
+            <div class="settings-group achievements-dashboard">
+                <h3>Your Achievements</h3>
+                <div id="achievements-grid" class="achievements-grid">
+                    <!-- Achievement cards will be populated dynamically -->
+                </div>
+                <div class="impact-stats">
+                    <h4>Your Environmental Impact</h4>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-number" id="eventsJoined">0</span>
+                            <span class="stat-label">Events Joined</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="achievementsEarned">0</span>
+                            <span class="stat-label">Achievements</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <h3>Display Preferences</h3>
+                <div class="setting-item">
+                    <label for="tempUnit">Temperature Unit</label>
+                    <select id="tempUnit">
+                        <option value="celsius">Celsius</option>
+                        <option value="fahrenheit">Fahrenheit</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label for="defaultView">Default View</label>
+                    <select id="defaultView">
+                        <option value="all">All Events</option>
+                        <option value="upcoming">Upcoming Events</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+            </div>
+            <div class="settings-group">
+                <h3>Notifications</h3>
+                <div class="setting-item">
+                    <label for="notificationsEnabled">
+                        <input type="checkbox" id="notificationsEnabled">
+                        Enable Notifications
+                    </label>
+                </div>
+            </div>
+            <button id="closeSettings" class="close-button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="event-chat" class="event-chat">
+        <div class="chat-header">
+            <h3>Event Chat</h3>
+            <button id="closeChatBtn" class="close-button">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="chat-messages" class="chat-messages"></div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <button id="sendMessageBtn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
 
     <main>
         <section id="hero" class="hero-section">
@@ -45,12 +180,78 @@
                 <p>Connect with other volunteers</p>
             </div>
         </section>
+
+        <section id="impact" class="impact-section">
+            <h2>Our Community Impact</h2>
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <i class="fas fa-trash-alt"></i>
+                    <span id="trashCollected" class="impact-number">0</span>
+                    <span class="impact-label">kg of Trash Collected</span>
+                </div>
+                <div class="impact-card">
+                    <i class="fas fa-users"></i>
+                    <span id="totalVolunteers" class="impact-number">0</span>
+                    <span class="impact-label">Volunteers</span>
+                </div>
+                <div class="impact-card">
+                    <i class="fas fa-calendar-check"></i>
+                    <span id="eventsCompleted" class="impact-number">0</span>
+                    <span class="impact-label">Events Completed</span>
+                </div>
+                <div class="impact-card">
+                    <i class="fas fa-globe-americas"></i>
+                    <span id="beachesCleaned" class="impact-number">0</span>
+                    <span class="impact-label">Beaches Cleaned</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="map" class="map-section">
+            <div class="map-container">
+                <div id="cleanup-map"></div>
+                <div id="next-cleanup-map">
+                    <h3>Next Cleanup Location: Pasir Ris</h3>
+                    <iframe
+                        width="100%"
+                        height="400"
+                        style="border:0"
+                        loading="lazy"
+                        allowfullscreen
+                        referrerpolicy="no-referrer-when-downgrade"
+                        src="https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=1.381497,103.955574&zoom=15&center=1.381497,103.955574&markers=color:red%7Clabel:Next+Cleanup%7C1.381497,103.955574">
+                    </iframe>
+                </div>
+            </div>
+            <div class="map-sidebar">
+                <h2>Beach Cleanup Locations</h2>
+                <div class="search-box">
+                    <input type="text" id="locationSearch" placeholder="Search by location...">
+                    <button id="searchButton" class="search-button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="filter-controls">
+                    <select id="dateFilter" class="filter-select">
+                        <option value="all">All Dates</option>
+                        <option value="upcoming">Upcoming Events</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div id="location-list"></div>
+            </div>
+        </section>
     </main>
+
+    <div id="notification-container" class="notification-container"></div>
 
     <footer>
         <p>&copy; 2025 ShoreSquad. All rights reserved.</p>
     </footer>
 
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
