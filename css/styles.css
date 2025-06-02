@@ -380,23 +380,21 @@ body {
 
 .forecast {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 0.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    margin-bottom: 1rem;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1rem 0;
 }
 
 .forecast-day {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    background: var(--sea-foam);
+    padding: 1rem;
+    border-radius: 8px;
     text-align: center;
-    background: white;
-    border-radius: 6px;
-    padding: 0.75rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.forecast-day:hover {
+    transform: translateY(-2px);
 }
 
 .forecast-date {
@@ -405,44 +403,293 @@ body {
     margin-bottom: 0.5rem;
 }
 
+.forecast-icon {
+    font-size: 2rem;
+    color: var(--ocean-blue);
+    margin: 0.5rem 0;
+}
+
 .forecast-details {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
-    font-size: 0.9rem;
-}
-
-.forecast-details .forecast {
-    color: var(--ocean-blue);
+    gap: 0.5rem;
 }
 
 .forecast-details .temp {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.forecast-details .high {
+    color: var(--deep-ocean);
     font-weight: bold;
 }
 
-.forecast-details .wind {
+.forecast-details .low {
     color: #666;
-    font-size: 0.85rem;
 }
 
-.forecast-details .wind i {
-    margin-right: 0.25rem;
+.forecast-details .condition {
+    color: var(--ocean-blue);
+    font-size: 0.9rem;
 }
 
-.loading-spinner {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--ocean-blue);
+.forecast-details .wind {
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+/* Map Markers and Popups */
+.marker {
+    width: 25px;
+    height: 25px;
+    background-color: var(--eco-green);
+    border: 2px solid white;
     border-radius: 50%;
-    border-top-color: transparent;
-    animation: spin 1s linear infinite;
-    margin-right: 0.5rem;
+    cursor: pointer;
+    transition: transform 0.2s;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.marker:hover {
+    transform: scale(1.2);
+}
+
+.mapboxgl-popup {
+    max-width: 300px;
+}
+
+.mapboxgl-popup-content {
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.mapboxgl-popup-content h3 {
+    color: var(--deep-ocean);
+    margin-bottom: 8px;
+}
+
+.popup-button, .list-button {
+    background-color: var(--ocean-blue);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.popup-button:hover, .list-button:hover {
+    background-color: var(--deep-ocean);
+}
+
+.location-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.location-item:last-child {
+    border-bottom: none;
+}
+
+.location-item h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.location-item p {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 3px;
+}
+
+/* Search Results Highlight */
+.location-item.search-match {
+    border-left: 4px solid var(--sandy-yellow);
+    background-color: rgba(247, 179, 43, 0.1);
+}
+
+/* Location Item Enhancements */
+.location-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.share-button {
+    background: var(--sandy-yellow);
+    color: var(--deep-ocean);
+    border: none;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s ease;
+}
+
+.share-button:hover {
+    background: #e5a012;
+    transform: translateY(-1px);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Weather Information Section */
+.weather-info {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    padding: 1rem;
+    margin: 1rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.weather-info img {
+    width: 35px;
+    height: 35px;
+}
+
+.weather-info span {
+    font-size: 0.9rem;
+    color: var(--deep-ocean);
+}
+
+.weather-info h4 {
+    color: var(--deep-ocean);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+/* Enhanced Weather Display */
+.current-weather {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.current-conditions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.current-conditions .forecast {
+    font-weight: bold;
+    color: var(--ocean-blue);
+}
+
+.weather-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.weather-details .temp {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--deep-ocean);
+}
+
+.weather-details .condition {
+    color: var(--ocean-blue);
+}
+
+.weather-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.forecast-section {
+    background: rgba(var(--ocean-blue-rgb), 0.05);
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.forecast {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.forecast-day {
+    background: var(--sea-foam);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    transition: transform 0.2s ease;
+}
+
+.forecast-day:hover {
+    transform: translateY(-2px);
+}
+
+.forecast-date {
+    font-weight: bold;
+    color: var(--deep-ocean);
+    margin-bottom: 0.5rem;
+}
+
+.forecast-icon {
+    font-size: 2rem;
+    color: var(--ocean-blue);
+    margin: 0.5rem 0;
+}
+
+.forecast-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.forecast-details .temp {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.forecast-details .high {
+    color: var(--deep-ocean);
+    font-weight: bold;
+}
+
+.forecast-details .low {
+    color: #666;
+}
+
+.forecast-details .condition {
+    color: var(--ocean-blue);
+    font-size: 0.9rem;
+}
+
+.forecast-details .wind {
+    font-size: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
 }
 
 /* Tide Information */
