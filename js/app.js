@@ -725,269 +725,100 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Enhanced Weather Service
+    // Enhanced Weather Service with NEA API
     const WeatherService = {
-        async getDetailedWeather(lat, lng) {
+        // Singapore regions mapping for NEA API
+        REGIONS: {
+            east: ['Pasir Ris', 'Tampines', 'Changi'],
+            west: ['Jurong East', 'Clementi', 'Choa Chu Kang'],
+            north: ['Woodlands', 'Sembawang', 'Yishun'],
+            south: ['Marina Bay', 'Sentosa', 'Bukit Merah'],
+            central: ['Bishan', 'Novena', 'Toa Payoh']
+        },
+
+        async get2HourForecast() {
             try {
-                // Get current weather
-                const currentWeather = await fetch(
-                    `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${CONFIG.OPENWEATHER_KEY}`
-                );
-                
-                if (!currentWeather.ok) throw new Error('Weather data fetch failed');
-                const current = await currentWeather.json();
-
-                // Get 5-day forecast
-                const forecast = await fetch(
-                    `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lng}&units=metric&appid=${CONFIG.OPENWEATHER_KEY}`
-                );
-                
-                if (!forecast.ok) throw new Error('Forecast data fetch failed');
-                const forecastData = await forecast.json();
-
-                return {
-                    current: {
-                        temp: Math.round(current.main.temp),
-                        condition: current.weather[0].main,
-                        icon: current.weather[0].icon,
-                        wind: Math.round(current.wind.speed),
-                        humidity: current.main.humidity,
-                        feelsLike: Math.round(current.main.feels_like)
-                    },
-                    forecast: forecastData.list
-                        .filter((item, index) => index % 8 === 0) // Get one forecast per day
-                        .map(item => ({
-                            date: new Date(item.dt * 1000).toLocaleDateString(),
-                            temp: Math.round(item.main.temp),
-                            condition: item.weather[0].main,
-                            icon: item.weather[0].icon,
-                            wind: Math.round(item.wind.speed)
-                        }))
-                };
+                const response = await fetch('https://api.data.gov.sg/v1/environment/2-hour-weather-forecast');
+                if (!response.ok) throw new Error('NEA 2-hour forecast fetch failed');
+                return await response.json();
             } catch (error) {
-                console.error('Weather fetch error:', error);
+                console.error('NEA 2-hour forecast error:', error);
                 return null;
             }
         },
 
-        // Mock tide data (in a real app, this would come from a tide API)
-        async getTideData(lat, lng) {
-            // Simulated tide data
-            return {
-                nextHigh: {
-                    time: new Date(Date.now() + 2 * 60 * 60 * 1000).toLocaleTimeString(),
-                    height: '1.8m'
-                },
-                nextLow: {
-                    time: new Date(Date.now() + 8 * 60 * 60 * 1000).toLocaleTimeString(),
-                    height: '0.3m'
-                },
-                current: 'rising'
-            };
-        }
-    };
+        async get24HourForecast() {
+            try {
+                const response = await fetch('https://api.data.gov.sg/v1/environment/24-hour-weather-forecast');
+                if (!response.ok) throw new Error('NEA 24-hour forecast fetch failed');
+                return await response.json();
+            } catch (error) {
+                console.error('NEA 24-hour forecast error:', error);
+                return null;
+            }
+        },
 
-    // Update the updateLocationList function to include detailed weather
-    const updateLocationList = (filteredLocations = null) => {
-        const locationList = document.getElementById('location-list');
-        const locations = filteredLocations || cleanupLocations.filter(dateFilters[currentFilter]);
-        const userPrefs = StorageManager.getUserPreferences();
+        async get4DayForecast() {
+            try {
+                const response = await fetch('https://api.data.gov.sg/v1/environment/4-day-weather-forecast');
+                if (!response.ok) throw new Error('NEA 4-day forecast fetch failed');
+                return await response.json();
+            } catch (error) {
+                console.error('NEA 4-day forecast error:', error);
+                return null;
+            }
+        },
 
-        locationList.innerHTML = locations
-            .map(location => `
-                <div class="location-item ${location.joined ? 'joined' : ''} ${filteredLocations ? 'search-match' : ''}">
-                    <h3>${location.name}</h3>
-                    <div class="location-header">
-                        <p>Date: ${new Date(location.date).toLocaleDateString()}</p>
-                        <button onclick="SocialSharing.shareEvent(${JSON.stringify(location)})" class="share-button">
-                            <i class="fas fa-share-alt"></i> Share
-                        </button>
-                    </div>
-                    <p>Participants: ${location.participants}</p>
-                    ${location.weather ? `
-                        <div class="weather-info">
-                            <div class="current-weather">
-                                <img src="https://openweathermap.org/img/wn/${location.weather.current.icon}@2x.png" 
-                                    alt="${location.weather.current.condition}">
-                                <div class="weather-details">
-                                    <span class="temp">${userPrefs.temperatureUnit === 'celsius' ? 
-                                        `${location.weather.current.temp}°C` : 
-                                        `${Math.round(location.weather.current.temp * 9/5 + 32)}°F`}</span>
-                                    <span class="condition">${location.weather.current.condition}</span>
-                                    <span class="wind">Wind: ${location.weather.current.wind} m/s</span>
-                                    <span class="humidity">Humidity: ${location.weather.current.humidity}%</span>
-                                </div>
-                            </div>
-                            ${location.weather.forecast ? `
-                                <div class="forecast">
-                                    ${location.weather.forecast.map(day => `
-                                        <div class="forecast-day">
-                                            <span class="date">${day.date}</span>
-                                            <img src="https://openweathermap.org/img/wn/${day.icon}.png" 
-                                                alt="${day.condition}">
-                                            <span class="temp">${userPrefs.temperatureUnit === 'celsius' ? 
-                                                `${day.temp}°C` : 
-                                                `${Math.round(day.temp * 9/5 + 32)}°F`}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-                            ${location.tideData ? `
-                                <div class="tide-info">
-                                    <div class="tide-header">Tide Information</div>
-                                    <div class="tide-details">
-                                        <span>Next High: ${location.tideData.nextHigh.time} (${location.tideData.nextHigh.height})</span>
-                                        <span>Next Low: ${location.tideData.nextLow.time} (${location.tideData.nextLow.height})</span>
-                                        <span>Current: ${location.tideData.current}</span>
-                                    </div>
-                                </div>
-                            ` : ''}
-                        </div>
-                    ` : `
-                        <div class="weather-loading">
-                            <span class="loading-spinner"></span>
-                            Loading weather...
-                        </div>
-                    `}
-                    <div class="action-buttons">
-                        <button 
-                            onclick="joinCleanup(${location.id})" 
-                            class="list-button ${location.joined ? 'joined' : ''}"
-                        >
-                            ${location.joined ? 'Joined ✓' : 'Join Event'}
-                        </button>
-                    </div>
-                </div>
-            `)
-            .join('');
-    };
-
-    // Update setupWeatherUpdates to include detailed weather and tide data
-    const setupWeatherUpdates = async () => {
-        const updateLocationsWeather = async () => {
-            let successCount = 0;
-            for (const location of cleanupLocations) {
-                const weather = await WeatherService.getDetailedWeather(
-                    location.coordinates[1],
-                    location.coordinates[0]
-                );
-                const tideData = await WeatherService.getTideData(
-                    location.coordinates[1],
-                    location.coordinates[0]
-                );
-                
-                if (weather) {
-                    location.weather = weather;
-                    location.tideData = tideData;
-                    successCount++;
+        getRegionForLocation(location) {
+            const locationName = location.name.toLowerCase();
+            for (const [region, areas] of Object.entries(this.REGIONS)) {
+                if (areas.some(area => locationName.includes(area.toLowerCase()))) {
+                    return region;
                 }
             }
-            updateLocationList();
-            
-            if (successCount === cleanupLocations.length) {
-                showNotification('Weather and tide data updated successfully', 'success');
-            } else if (successCount > 0) {
-                showNotification('Some weather and tide data could not be loaded', 'info');
-            }
-        };
+            return 'east'; // Default to east for Pasir Ris
+        },
 
-        await updateLocationsWeather();
-        // Update weather and tide data every 30 minutes
-        setInterval(updateLocationsWeather, 30 * 60 * 1000);
-    };
+        async getDetailedWeather(lat, lng, locationName = 'Pasir Ris') {
+            try {
+                const [twoHourData, twentyFourHourData, fourDayData] = await Promise.all([
+                    this.get2HourForecast(),
+                    this.get24HourForecast(),
+                    this.get4DayForecast()
+                ]);
 
-    // Enhanced join cleanup handler with chat and impact tracking
-    window.joinCleanup = (locationId) => {
-        const location = cleanupLocations.find(loc => loc.id === locationId);
-        if (location) {
-            if (!location.joined) {
-                location.participants++;
-                location.joined = true;
-                StorageManager.addJoinedEvent(locationId);
-                
-                // Update profile and gamification
-                ProfileSystem.addXP(50); // Award XP for joining
-                ProfileSystem.updateStats({
-                    eventsCompleted: ProfileSystem.profile.stats.eventsCompleted + 1,
-                    trashCollected: ProfileSystem.profile.stats.trashCollected + 
-                        (location.trashCollected || 0)
-                });
-
-                // Update impact stats
-                ImpactTracker.incrementStats({
-                    trashCollected: location.trashCollected || 0,
-                    isCompleted: false
-                });
-
-                // Open chat for the event
-                ChatSystem.openChat(locationId);
-                
-                // Check for achievements
-                const joinedEvents = StorageManager.getJoinedEvents();
-                if (joinedEvents.length === 1) {
-                    AchievementSystem.earn('FIRST_CLEANUP');
-                    ProfileSystem.awardBadge('NOVICE_CLEANER');
+                if (!twoHourData || !twentyFourHourData || !fourDayData) {
+                    throw new Error('Failed to fetch complete weather data');
                 }
 
-                const eventDate = new Date(location.date);
-                const twoWeeksFromNow = new Date();
-                twoWeeksFromNow.setDate(twoWeeksFromNow.getDate() + 14);
-                if (eventDate > twoWeeksFromNow) {
-                    AchievementSystem.earn('EARLY_BIRD');
-                }
+                const region = this.getRegionForLocation({ name: locationName });
+                
+                // Get current forecast
+                const currentForecast = twoHourData.items[0].forecasts
+                    .find(f => f.area.toLowerCase() === locationName.toLowerCase()) || 
+                    twoHourData.items[0].forecasts
+                    .find(f => f.area.toLowerCase().includes(region));
 
-                updateLocationList();
-                showNotification(
-                    `<i class="fas fa-check"></i> You've successfully joined the cleanup at ${location.name}!`,
-                    'success'
-                );
-            } else {
-                ChatSystem.openChat(locationId);
-            }
-            updateMarkers();
-        } else {
-            showNotification('Could not find the specified event', 'error');
-        }
-    };
+                // Get 24-hour forecast
+                const general24Hour = twentyFourHourData.items[0].general;
+                const forecast24Hour = twentyFourHourData.items[0].periods;
 
-    // Social sharing with gamification
-    window.shareEvent = (location) => {
-        SocialSharing.shareEvent(location)
-            .then(() => {
-                ProfileSystem.addXP(25); // Award XP for sharing
-                ProfileSystem.updateStats({
-                    friendsInvited: ProfileSystem.profile.stats.friendsInvited + 1
-                });
-            });
-    };
+                // Get 4-day forecast
+                const fourDayForecast = fourDayData.items[0].forecasts;
 
-    // Update next cleanup information in the UI
-    const updateNextCleanupInfo = () => {
-        const nextCleanupTitle = document.querySelector('#next-cleanup-map h3');
-        if (nextCleanupTitle) {
-            const date = new Date(NEXT_CLEANUP.date);
-            const formattedDate = date.toLocaleDateString('en-US', { 
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            nextCleanupTitle.textContent = `Next Cleanup: ${NEXT_CLEANUP.name} - ${formattedDate} at ${NEXT_CLEANUP.time}`;
-        }
-    };
-
-    // Call the update function
-    updateNextCleanupInfo();
-
-    // Initialize app components
-    initializeMap();
-    setupWeatherUpdates();
-    initializeCleanupLocations();
-    SearchManager.init();
-    observeElements();
-
-    // Initialize new systems
-    ProfileSystem.init();
-    ChatSystem.init();
-    ImpactTracker.init();
-});
+                return {
+                    current: {
+                        forecast: currentForecast?.forecast || 'No data available',
+                        temperature: {
+                            low: general24Hour.temperature.low,
+                            high: general24Hour.temperature.high
+                        },
+                        humidity: {
+                            low: general24Hour.relative_humidity.low,
+                            high: general24Hour.relative_humidity.high
+                        },
+                        wind: {
+                            speed: {
+                                low: general24Hour.wind.speed.low,
+                                high: general24Hour.wind.speed.high
+                           
